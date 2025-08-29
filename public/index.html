@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Primary Meta Tags -->
+  <title>Morning Emotional Care - Build Your Wellness Routine</title>
+  <meta name="title" content="Morning Emotional Care - Build Your Wellness Routine" />
+  <meta name="description" content="Create personalized 30-minute morning routines for emotional wellbeing. Features gratitude journaling, meditation, breathing exercises, and more mindfulness practices." />
+  <meta name="keywords" content="morning routine, emotional wellness, mindfulness, meditation, gratitude journaling, self care, mental health, wellness app" />
+  <meta name="author" content="Morning Emotional Care Team" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#3b82f6" />
+  <meta name="msapplication-TileColor" content="#3b82f6" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://morning-emotional-care.vercel.app/" />
+  <meta property="og:title" content="Morning Emotional Care - Build Your Wellness Routine" />
+  <meta property="og:description" content="Create personalized morning routines for emotional wellbeing with guided practices like meditation, gratitude journaling, and mindful breathing." />
+  <meta property="og:image" content="/og-image.png" />
+  <meta property="og:site_name" content="Morning Emotional Care" />
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://morning-emotional-care.vercel.app/" />
+  <meta property="twitter:title" content="Morning Emotional Care - Build Your Wellness Routine" />
+  <meta property="twitter:description" content="Create personalized morning routines for emotional wellbeing with guided practices." />
+  <meta property="twitter:image" content="/twitter-image.png" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="alternate icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/manifest.json" />
+  
+  <!-- Preconnect to external domains for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+  <!-- Google Fonts - Optional, can be removed if using system fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Prevent flash of unstyled content -->
+  <style>
+    /* Critical CSS for initial loading */
+    html {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #1f2937;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #dbeafe 0%, #e9d5ff 100%);
+      min-height: 100vh;
+    }
+    
+    /* Loading spinner styles */
+    .loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #dbeafe 0%, #e9d5ff 100%);
+      z-index: 9999;
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #e5e7eb;
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .loading-text {
+      margin-top: 20px;
+      color: #6b7280;
+      font-size: 16px;
+      text-align: center;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Hide loading when React app loads */
+    #root:not(:empty) + .loading-container {
+      display: none;
+    }
+    
+    /* Smooth transitions */
+    * {
+      box-sizing: border-box;
+    }
+    
+    /* Focus styles for accessibility */
+    button:focus,
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid #3b82f6;
+      outline-offset: 2px;
+    }
+    
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      body {
+        background: white;
+        color: black;
+      }
+    }
+    
+    /* Reduced motion for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      
+      .loading-spinner {
+        animation: none;
+        border: 4px solid #3b82f6;
+      }
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: #f8fafc;
+      }
+      
+      .loading-container {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      }
+      
+      .loading-text {
+        color: #cbd5e1;
+      }
+    }
+  </style>
+  
+  <!-- Performance monitoring - Optional -->
+  <script>
+    // Measure loading performance
+    window.addEventListener('load', function() {
+      if ('performance' in window) {
+        const loadTime = performance.now();
+        console.log('App loaded in:', Math.round(loadTime), 'ms');
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <!-- Skip to main content for screen readers -->
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md z-50">
+    Skip to main content
+  </a>
+  
+  <!-- React app root -->
+  <div id="root"></div>
+  
+  <!-- Loading fallback -->
+  <div class="loading-container">
+    <div>
+      <div class="loading-spinner"></div>
+      <div class="loading-text">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <!-- Sun icon SVG -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="5" stroke="#f59e0b" stroke-width="2"/>
+            <line x1="12" y1="1" x2="12" y2="3" stroke="#f59e0b" stroke-width="2"/>
+            <line x1="12" y1="21" x2="12" y2="23" stroke="#f59e0b" stroke-width="2"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="#f59e0b" stroke-width="2"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="#f59e0b" stroke-width="2"/>
+            <line x1="1" y1="12" x2="3" y2="12" stroke="#f59e0b" stroke-width="2"/>
+            <line x1="21" y1="12" x2="23" y2="12" stroke="#f59e0b" stroke-width="2"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="#f59e0b" stroke-width="2"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="#f59e0b" stroke-width="2"/>
+          </svg>
+          Loading Morning Care...
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Error fallback for when JavaScript fails -->
+  <noscript>
+    <div style="text-align: center; padding: 50px; font-family: system-ui, sans-serif;">
+      <h1 style="color: #dc2626;">JavaScript Required</h1>
+      <p style="color: #6b7280; max-width: 400px; margin: 0 auto;">
+        Morning Emotional Care requires JavaScript to run. Please enable JavaScript in your browser settings and refresh the page.
+      </p>
+      <div style="margin-top: 30px;">
+        <a href="https://enable-javascript.com/" target="_blank" style="color: #3b82f6; text-decoration: underline;">
+          Learn how to enable JavaScript
+        </a>
+      </div>
+    </div>
+  </noscript>
+  
+  <!-- Service Worker registration - Optional for PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(registration) {
+            console.log('SW registered: ', registration);
+          })
+          .catch(function(registrationError) {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+  </script>
+  
+  <!-- Analytics - Replace with your tracking ID -->
+  <!-- Google Analytics 4 - Optional -->
+  <!-- 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=GA_TRACKING_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'GA_TRACKING_ID');
+  </script>
+  -->
+  
+  <!-- Vite will inject the script tag here -->
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
