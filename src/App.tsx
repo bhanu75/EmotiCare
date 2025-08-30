@@ -1,8 +1,24 @@
 import React, { useState } from 'react';
-import { Heart, Sun, Clock, CheckCircle, Star, Coffee, Book, Music, Smile } from 'lucide-react';
+import { Heart, Sun, Clock, CheckCircle, Star, Coffee, Book, Music, Smile, LucideIcon } from 'lucide-react';
+
+// Type definitions
+interface Practice {
+  id: string;
+  name: string;
+  duration: number;
+  category: string;
+  description: string;
+  icon: LucideIcon;
+  color: string;
+}
+
+interface SampleRoutine {
+  name: string;
+  practices: string[];
+}
 
 // Data layer - separated from UI logic
-const practicesData = [
+const practicesData: Practice[] = [
   {
     id: 'gratitude',
     name: 'Gratitude Journaling',
@@ -86,7 +102,7 @@ const practicesData = [
   }
 ];
 
-const sampleRoutinesData = [
+const sampleRoutinesData: SampleRoutine[] = [
   {
     name: 'Quick Start (15 min)',
     practices: ['gratitude', 'affirmations', 'breathing']
@@ -103,12 +119,12 @@ const sampleRoutinesData = [
 
 // Custom hooks for state management
 const useRoutineBuilder = () => {
-  const [selectedPractices, setSelectedPractices] = useState([]);
-  const [currentRoutine, setCurrentRoutine] = useState([]);
-  const [totalTime, setTotalTime] = useState(0);
-  const [completedToday, setCompletedToday] = useState(new Set());
+  const [selectedPractices, setSelectedPractices] = useState<string[]>([]);
+  const [currentRoutine, setCurrentRoutine] = useState<Practice[]>([]);
+  const [totalTime, setTotalTime] = useState<number>(0);
+  const [completedToday, setCompletedToday] = useState<Set<string>>(new Set());
 
-  const togglePractice = (practice) => {
+  const togglePractice = (practice: Practice) => {
     const isSelected = selectedPractices.includes(practice.id);
     if (isSelected) {
       setSelectedPractices(prev => prev.filter(id => id !== practice.id));
@@ -124,11 +140,11 @@ const useRoutineBuilder = () => {
     setTotalTime(total);
   };
 
-  const markCompleted = (practiceId) => {
+  const markCompleted = (practiceId: string) => {
     setCompletedToday(prev => new Set([...prev, practiceId]));
   };
 
-  const loadSampleRoutine = (routine) => {
+  const loadSampleRoutine = (routine: SampleRoutine) => {
     setSelectedPractices(routine.practices);
   };
 
@@ -145,14 +161,14 @@ const useRoutineBuilder = () => {
 };
 
 // Utility functions
-const getTimeColor = (totalTime) => {
+const getTimeColor = (totalTime: number): string => {
   if (totalTime <= 30) return 'text-green-600';
   if (totalTime <= 35) return 'text-yellow-600';
   return 'text-red-600';
 };
 
 // Header Component
-const Header = () => (
+const Header: React.FC = () => (
   <div className="text-center mb-8">
     <div className="flex items-center justify-center gap-2 mb-4">
       <Sun className="w-8 h-8 text-yellow-500" />
@@ -163,7 +179,11 @@ const Header = () => (
 );
 
 // Sample Routines Component
-const SampleRoutines = ({ onLoadRoutine }) => (
+interface SampleRoutinesProps {
+  onLoadRoutine: (routine: SampleRoutine) => void;
+}
+
+const SampleRoutines: React.FC<SampleRoutinesProps> = ({ onLoadRoutine }) => (
   <div className="mb-8">
     <h2 className="text-xl font-semibold mb-4 text-gray-700">Quick Start Options</h2>
     <div className="grid md:grid-cols-3 gap-4">
@@ -184,7 +204,13 @@ const SampleRoutines = ({ onLoadRoutine }) => (
 );
 
 // Practice Card Component
-const PracticeCard = ({ practice, isSelected, onToggle }) => {
+interface PracticeCardProps {
+  practice: Practice;
+  isSelected: boolean;
+  onToggle: (practice: Practice) => void;
+}
+
+const PracticeCard: React.FC<PracticeCardProps> = ({ practice, isSelected, onToggle }) => {
   const Icon = practice.icon;
   
   return (
@@ -215,7 +241,12 @@ const PracticeCard = ({ practice, isSelected, onToggle }) => {
 };
 
 // Practice Selection Component
-const PracticeSelection = ({ selectedPractices, onTogglePractice }) => (
+interface PracticeSelectionProps {
+  selectedPractices: string[];
+  onTogglePractice: (practice: Practice) => void;
+}
+
+const PracticeSelection: React.FC<PracticeSelectionProps> = ({ selectedPractices, onTogglePractice }) => (
   <div className="mb-8">
     <h2 className="text-xl font-semibold mb-4 text-gray-700">Choose Your Practices</h2>
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -232,7 +263,12 @@ const PracticeSelection = ({ selectedPractices, onTogglePractice }) => (
 );
 
 // Build Button Component
-const BuildButton = ({ selectedPractices, onBuild }) => {
+interface BuildButtonProps {
+  selectedPractices: string[];
+  onBuild: () => void;
+}
+
+const BuildButton: React.FC<BuildButtonProps> = ({ selectedPractices, onBuild }) => {
   if (selectedPractices.length === 0) return null;
   
   return (
@@ -248,7 +284,14 @@ const BuildButton = ({ selectedPractices, onBuild }) => {
 };
 
 // Routine Item Component
-const RoutineItem = ({ practice, index, isCompleted, onMarkCompleted }) => {
+interface RoutineItemProps {
+  practice: Practice;
+  index: number;
+  isCompleted: boolean;
+  onMarkCompleted: (practiceId: string) => void;
+}
+
+const RoutineItem: React.FC<RoutineItemProps> = ({ practice, index, isCompleted, onMarkCompleted }) => {
   const Icon = practice.icon;
   
   return (
@@ -290,7 +333,7 @@ const RoutineItem = ({ practice, index, isCompleted, onMarkCompleted }) => {
 };
 
 // Instructions Component
-const Instructions = () => (
+const Instructions: React.FC = () => (
   <div className="mt-6 p-4 bg-blue-50 rounded-lg">
     <h3 className="font-medium text-blue-800 mb-2">How to Use This Toolkit:</h3>
     <div className="text-sm text-blue-700 space-y-2">
@@ -303,7 +346,7 @@ const Instructions = () => (
 );
 
 // Example Routines Component
-const ExampleRoutines = () => (
+const ExampleRoutines: React.FC = () => (
   <div className="mt-4 p-4 bg-green-50 rounded-lg">
     <h3 className="font-medium text-green-800 mb-3">5 Example Routines for Different Needs:</h3>
     <div className="space-y-3 text-sm text-green-700">
@@ -336,7 +379,7 @@ const ExampleRoutines = () => (
 );
 
 // Pro Tips Component
-const ProTips = () => (
+const ProTips: React.FC = () => (
   <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
     <h3 className="font-medium text-yellow-800 mb-2">Pro Tips:</h3>
     <ul className="text-sm text-yellow-700 space-y-1">
@@ -350,7 +393,14 @@ const ProTips = () => (
 );
 
 // Current Routine Display Component
-const CurrentRoutineDisplay = ({ currentRoutine, totalTime, completedToday, onMarkCompleted }) => {
+interface CurrentRoutineDisplayProps {
+  currentRoutine: Practice[];
+  totalTime: number;
+  completedToday: Set<string>;
+  onMarkCompleted: (practiceId: string) => void;
+}
+
+const CurrentRoutineDisplay: React.FC<CurrentRoutineDisplayProps> = ({ currentRoutine, totalTime, completedToday, onMarkCompleted }) => {
   if (currentRoutine.length === 0) return null;
   
   return (
@@ -390,7 +440,7 @@ const CurrentRoutineDisplay = ({ currentRoutine, totalTime, completedToday, onMa
 };
 
 // Main Component
-const MorningEmotionalCare = () => {
+const MorningEmotionalCare: React.FC = () => {
   const {
     selectedPractices,
     currentRoutine,
