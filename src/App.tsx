@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, Sun, Clock, CheckCircle, Star, Coffee, Book, Music, Smile, LucideIcon } from 'lucide-react';
-
-// 🔧 ADD THIS RIGHT AFTER YOUR IMPORTS IN App.tsx
 
 // Configuration object - controls all features
 const appConfig = {
@@ -143,8 +141,6 @@ const sampleRoutinesData: SampleRoutine[] = [
   }
 ];
 
-// 🆕 ADD THIS AFTER sampleRoutinesData array
-
 // Categories for filtering (only used if showCategories = true)
 const categories = [
   { id: 'all', name: '🌟 All Practices', color: 'bg-gray-100' },
@@ -164,7 +160,6 @@ const moodOptions = [
   { id: 'tired', name: '😴 Tired', practices: ['tea', 'gentle-movement', 'music'] }
 ];
 
-
 // Custom hooks for state management
 const useRoutineBuilder = () => {
   const [selectedPractices, setSelectedPractices] = useState<string[]>([]);
@@ -175,7 +170,6 @@ const useRoutineBuilder = () => {
   const [currentMood, setCurrentMood] = useState<string>('');
   const [routineProgress, setRoutineProgress] = useState<number>(0);
 
-  // 🆕 ADD THESE 2 NEW FUNCTIONS
   const loadMoodRoutine = (moodId: string) => {
     const mood = moodOptions.find(m => m.id === moodId);
     if (mood) {
@@ -190,7 +184,6 @@ const useRoutineBuilder = () => {
     setRoutineProgress(Math.round((completed / currentRoutine.length) * 100));
   };
 
-  
   const togglePractice = (practice: Practice) => {
     const isSelected = selectedPractices.includes(practice.id);
     if (isSelected) {
@@ -230,9 +223,6 @@ const useRoutineBuilder = () => {
     loadMoodRoutine,
     routineProgress,
     updateProgress
-  };
-};
-    
   };
 };
 
@@ -279,6 +269,93 @@ const SampleRoutines: React.FC<SampleRoutinesProps> = ({ onLoadRoutine }) => (
   </div>
 );
 
+// Category Filter Component (only shows if config enabled)
+interface CategoryFilterProps {
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+}
+
+const CategoryFilter: React.FC<CategoryFilterProps> = ({ selectedCategory, onCategoryChange }) => {
+  if (!appConfig.features.showCategories) return null;
+
+  return (
+    <div className="mb-6">
+      <h3 className="text-lg font-medium mb-3 text-gray-700">Filter by Category</h3>
+      <div className="flex flex-wrap gap-2">
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => onCategoryChange(category.id)}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              selectedCategory === category.id
+                ? 'bg-blue-600 text-white'
+                : `${category.color} text-gray-700 hover:bg-blue-100`
+            }`}
+          >
+            {category.name}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Mood Tracker Component (only shows if config enabled)
+interface MoodTrackerProps {
+  currentMood: string;
+  onMoodSelect: (moodId: string) => void;
+}
+
+const MoodTracker: React.FC<MoodTrackerProps> = ({ currentMood, onMoodSelect }) => {
+  if (!appConfig.features.showMoodTracker) return null;
+
+  return (
+    <div className="mb-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
+      <h3 className="text-lg font-medium mb-3 text-gray-800">How are you feeling today?</h3>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+        {moodOptions.map((mood) => (
+          <button
+            key={mood.id}
+            onClick={() => onMoodSelect(mood.id)}
+            className={`p-2 rounded-lg text-sm font-medium transition-colors text-center ${
+              currentMood === mood.id
+                ? 'bg-purple-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-purple-100'
+            }`}
+          >
+            {mood.name}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Progress Bar Component (only shows if config enabled)
+interface ProgressBarProps {
+  progress: number;
+  total: number;
+}
+
+const ProgressBar: React.FC<ProgressBarProps> = ({ progress, total }) => {
+  if (!appConfig.features.showProgress || total === 0) return null;
+
+  return (
+    <div className="mb-4">
+      <div className="flex justify-between text-sm text-gray-600 mb-1">
+        <span>Progress</span>
+        <span>{progress}% Complete</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2">
+        <div 
+          className="bg-green-600 h-2 rounded-full transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+    </div>
+  );
+};
+
 // Practice Card Component
 interface PracticeCardProps {
   practice: Practice;
@@ -316,17 +393,22 @@ const PracticeCard: React.FC<PracticeCardProps> = ({ practice, isSelected, onTog
   );
 };
 
-// Practice Selection Component
+// Practice Selection Component (Updated to use filtered practices)
 interface PracticeSelectionProps {
   selectedPractices: string[];
   onTogglePractice: (practice: Practice) => void;
+  practices?: Practice[];
 }
 
-const PracticeSelection: React.FC<PracticeSelectionProps> = ({ selectedPractices, onTogglePractice }) => (
+const PracticeSelection: React.FC<PracticeSelectionProps> = ({ 
+  selectedPractices, 
+  onTogglePractice, 
+  practices = practicesData 
+}) => (
   <div className="mb-8">
     <h2 className="text-xl font-semibold mb-4 text-gray-700">Choose Your Practices</h2>
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {practicesData.map((practice) => (
+      {practices.map((practice) => (
         <PracticeCard
           key={practice.id}
           practice={practice}
@@ -468,6 +550,7 @@ const ProTips: React.FC = () => (
   </div>
 );
 
+
 // Current Routine Display Component
 interface CurrentRoutineDisplayProps {
   currentRoutine: Practice[];
@@ -515,95 +598,6 @@ const CurrentRoutineDisplay: React.FC<CurrentRoutineDisplayProps> = ({ currentRo
   );
 };
 
-  // 🆕 ADD THESE COMPONENTS BEFORE your main MorningEmotionalCare component
-
-// Category Filter Component (only shows if config enabled)
-interface CategoryFilterProps {
-  selectedCategory: string;
-  onCategoryChange: (category: string) => void;
-}
-
-const CategoryFilter: React.FC<CategoryFilterProps> = ({ selectedCategory, onCategoryChange }) => {
-  if (!appConfig.features.showCategories) return null;
-
-  return (
-    <div className="mb-6">
-      <h3 className="text-lg font-medium mb-3 text-gray-700">Filter by Category</h3>
-      <div className="flex flex-wrap gap-2">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => onCategoryChange(category.id)}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-              selectedCategory === category.id
-                ? 'bg-blue-600 text-white'
-                : `${category.color} text-gray-700 hover:bg-blue-100`
-            }`}
-          >
-            {category.name}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// Mood Tracker Component (only shows if config enabled)
-interface MoodTrackerProps {
-  currentMood: string;
-  onMoodSelect: (moodId: string) => void;
-}
-
-const MoodTracker: React.FC<MoodTrackerProps> = ({ currentMood, onMoodSelect }) => {
-  if (!appConfig.features.showMoodTracker) return null;
-
-  return (
-    <div className="mb-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
-      <h3 className="text-lg font-medium mb-3 text-gray-800">How are you feeling today?</h3>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-        {moodOptions.map((mood) => (
-          <button
-            key={mood.id}
-            onClick={() => onMoodSelect(mood.id)}
-            className={`p-2 rounded-lg text-sm font-medium transition-colors text-center ${
-              currentMood === mood.id
-                ? 'bg-purple-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-purple-100'
-            }`}
-          >
-            {mood.name}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// Progress Bar Component (only shows if config enabled)
-interface ProgressBarProps {
-  progress: number;
-  total: number;
-}
-
-const ProgressBar: React.FC<ProgressBarProps> = ({ progress, total }) => {
-  if (!appConfig.features.showProgress || total === 0) return null;
-
-  return (
-    <div className="mb-4">
-      <div className="flex justify-between text-sm text-gray-600 mb-1">
-        <span>Progress</span>
-        <span>{progress}% Complete</span>
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-2">
-        <div 
-          className="bg-green-600 h-2 rounded-full transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        ></div>
-      </div>
-    </div>
-  );
-};
-
 // Main Component
 const MorningEmotionalCare: React.FC = () => {
   const {
@@ -614,18 +608,40 @@ const MorningEmotionalCare: React.FC = () => {
     togglePractice,
     buildRoutine,
     markCompleted,
-    loadSampleRoutine
+    loadSampleRoutine,
+    selectedCategory,
+    setSelectedCategory,
+    currentMood,
+    loadMoodRoutine,
+    routineProgress,
+    updateProgress
   } = useRoutineBuilder();
+
+  // Filter practices based on selected category
+  const displayedPractices = selectedCategory === 'all' 
+    ? practicesData 
+    : practicesData.filter(p => p.category === selectedCategory);
+
+  // Update progress when completed practices change
+  useEffect(() => {
+    updateProgress();
+  }, [completedToday, updateProgress]);
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
       <Header />
+      
+      {/* NEW FEATURES - Only show if enabled in config */}
+      <MoodTracker currentMood={currentMood} onMoodSelect={loadMoodRoutine} />
+      <CategoryFilter selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
+      <ProgressBar progress={routineProgress} total={currentRoutine.length} />
       
       <SampleRoutines onLoadRoutine={loadSampleRoutine} />
       
       <PracticeSelection 
         selectedPractices={selectedPractices}
         onTogglePractice={togglePractice}
+        practices={displayedPractices}
       />
       
       <BuildButton 
