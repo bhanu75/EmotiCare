@@ -1,6 +1,32 @@
 import React, { useState } from 'react';
 import { Heart, Sun, Clock, CheckCircle, Star, Coffee, Book, Music, Smile, LucideIcon } from 'lucide-react';
 
+// 🔧 ADD THIS RIGHT AFTER YOUR IMPORTS IN App.tsx
+
+// Configuration object - controls all features
+const appConfig = {
+  features: {
+    showTimer: true,           // Timer during practices
+    showProgress: true,        // Progress bar for routine
+    showCategories: true,      // Category filter buttons
+    showDifficulty: false,     // Difficulty levels for practices
+    enableStreaks: false,      // Track daily streaks
+    showMoodTracker: true,     // Mood selection before routine
+    enableSounds: false,       // Sound notifications
+    showWeather: false,        // Weather-based recommendations
+  },
+  limits: {
+    maxRoutineTime: 45,        // Max routine duration
+    minPractices: 1,           // Min practices required
+    maxPractices: 8,           // Max practices allowed
+  },
+  ui: {
+    theme: 'wellness',         // UI theme
+    showTips: true,            // Show pro tips section
+    compactMode: false,        // Compact UI layout
+  }
+};
+
 // Type definitions
 interface Practice {
   id: string;
