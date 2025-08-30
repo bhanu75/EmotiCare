@@ -143,13 +143,54 @@ const sampleRoutinesData: SampleRoutine[] = [
   }
 ];
 
+// 🆕 ADD THIS AFTER sampleRoutinesData array
+
+// Categories for filtering (only used if showCategories = true)
+const categories = [
+  { id: 'all', name: '🌟 All Practices', color: 'bg-gray-100' },
+  { id: 'mindfulness', name: '🧘 Mindfulness', color: 'bg-purple-100' },
+  { id: 'physical', name: '💪 Physical', color: 'bg-green-100' },
+  { id: 'planning', name: '📋 Planning', color: 'bg-blue-100' },
+  { id: 'joy', name: '😊 Joy', color: 'bg-yellow-100' },
+  { id: 'growth', name: '📚 Growth', color: 'bg-indigo-100' }
+];
+
+// Mood options (only used if showMoodTracker = true)
+const moodOptions = [
+  { id: 'energetic', name: '⚡ Energetic', practices: ['music', 'gentle-movement', 'affirmations'] },
+  { id: 'calm', name: '😌 Need Calm', practices: ['breathing', 'meditation', 'tea'] },
+  { id: 'motivated', name: '🎯 Need Motivation', practices: ['affirmations', 'music', 'intentions'] },
+  { id: 'stressed', name: '😰 Stressed', practices: ['breathing', 'gratitude', 'tea'] },
+  { id: 'tired', name: '😴 Tired', practices: ['tea', 'gentle-movement', 'music'] }
+];
+
+
 // Custom hooks for state management
 const useRoutineBuilder = () => {
   const [selectedPractices, setSelectedPractices] = useState<string[]>([]);
   const [currentRoutine, setCurrentRoutine] = useState<Practice[]>([]);
   const [totalTime, setTotalTime] = useState<number>(0);
   const [completedToday, setCompletedToday] = useState<Set<string>>(new Set());
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [currentMood, setCurrentMood] = useState<string>('');
+  const [routineProgress, setRoutineProgress] = useState<number>(0);
 
+  // 🆕 ADD THESE 2 NEW FUNCTIONS
+  const loadMoodRoutine = (moodId: string) => {
+    const mood = moodOptions.find(m => m.id === moodId);
+    if (mood) {
+      setSelectedPractices(mood.practices);
+      setCurrentMood(moodId);
+    }
+  };
+
+  const updateProgress = () => {
+    if (currentRoutine.length === 0) return;
+    const completed = currentRoutine.filter(p => completedToday.has(p.id)).length;
+    setRoutineProgress(Math.round((completed / currentRoutine.length) * 100));
+  };
+
+  
   const togglePractice = (practice: Practice) => {
     const isSelected = selectedPractices.includes(practice.id);
     if (isSelected) {
@@ -182,7 +223,16 @@ const useRoutineBuilder = () => {
     togglePractice,
     buildRoutine,
     markCompleted,
-    loadSampleRoutine
+    loadSampleRoutine,
+    selectedCategory,
+    setSelectedCategory,
+    currentMood,
+    loadMoodRoutine,
+    routineProgress,
+    updateProgress
+  };
+};
+    
   };
 };
 
@@ -461,6 +511,95 @@ const CurrentRoutineDisplay: React.FC<CurrentRoutineDisplayProps> = ({ currentRo
       <Instructions />
       <ExampleRoutines />
       <ProTips />
+    </div>
+  );
+};
+
+  // 🆕 ADD THESE COMPONENTS BEFORE your main MorningEmotionalCare component
+
+// Category Filter Component (only shows if config enabled)
+interface CategoryFilterProps {
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+}
+
+const CategoryFilter: React.FC<CategoryFilterProps> = ({ selectedCategory, onCategoryChange }) => {
+  if (!appConfig.features.showCategories) return null;
+
+  return (
+    <div className="mb-6">
+      <h3 className="text-lg font-medium mb-3 text-gray-700">Filter by Category</h3>
+      <div className="flex flex-wrap gap-2">
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => onCategoryChange(category.id)}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              selectedCategory === category.id
+                ? 'bg-blue-600 text-white'
+                : `${category.color} text-gray-700 hover:bg-blue-100`
+            }`}
+          >
+            {category.name}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Mood Tracker Component (only shows if config enabled)
+interface MoodTrackerProps {
+  currentMood: string;
+  onMoodSelect: (moodId: string) => void;
+}
+
+const MoodTracker: React.FC<MoodTrackerProps> = ({ currentMood, onMoodSelect }) => {
+  if (!appConfig.features.showMoodTracker) return null;
+
+  return (
+    <div className="mb-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
+      <h3 className="text-lg font-medium mb-3 text-gray-800">How are you feeling today?</h3>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+        {moodOptions.map((mood) => (
+          <button
+            key={mood.id}
+            onClick={() => onMoodSelect(mood.id)}
+            className={`p-2 rounded-lg text-sm font-medium transition-colors text-center ${
+              currentMood === mood.id
+                ? 'bg-purple-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-purple-100'
+            }`}
+          >
+            {mood.name}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Progress Bar Component (only shows if config enabled)
+interface ProgressBarProps {
+  progress: number;
+  total: number;
+}
+
+const ProgressBar: React.FC<ProgressBarProps> = ({ progress, total }) => {
+  if (!appConfig.features.showProgress || total === 0) return null;
+
+  return (
+    <div className="mb-4">
+      <div className="flex justify-between text-sm text-gray-600 mb-1">
+        <span>Progress</span>
+        <span>{progress}% Complete</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2">
+        <div 
+          className="bg-green-600 h-2 rounded-full transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
     </div>
   );
 };
